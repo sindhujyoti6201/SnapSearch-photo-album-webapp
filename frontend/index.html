@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapSearch Photo Album</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SnapSearch Photo Album</h1>
+
+        <section class="upload-section">
+            <h2>Upload Photo</h2>
+            <input type="file" id="photoFile" accept="image/*">
+            <input type="text" id="customLabels" placeholder="Enter custom labels (comma separated)">
+            <button onclick="uploadPhoto()">Upload</button>
+        </section>
+
+        <section class="search-section">
+            <h2>Search Photos</h2>
+            <input type="text" id="searchQuery" placeholder="Search by label...">
+            <button onclick="searchPhotos()">Search</button>
+        </section>
+
+        <section class="results-section">
+            <h2>Results</h2>
+            <div id="results" class="photo-grid"></div>
+        </section>
+    </div>
+
+    <!-- API Gateway SDK Scripts -->
+    <script src="./js/sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script src="./js/sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script src="./js/sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script src="./js/sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script src="./js/sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script src="./js/sdk/lib/url-template/url-template.js"></script>
+    <script src="./js/sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script src="./js/sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script src="./js/sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script src="./js/sdk/lib/apiGatewayCore/utils.js"></script>
+    <script src="./js/sdk/apigClient.js"></script>
+
+    <!-- App Logic -->
+    <script src="./js/sdk/app.js"></script>
+</body>
+</html>
