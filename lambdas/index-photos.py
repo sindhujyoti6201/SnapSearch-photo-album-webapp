@@ -8,6 +8,7 @@ import urllib.parse
 s3 = boto3.client('s3')
 rekognition = boto3.client('rekognition')
 
+print("DEPLOYING LAMBDA VIA CODEBUILD")
 # OpenSearch Configuration
 OPENSEARCH_ENDPOINT = "https://search-photos-2zcv2zir5roxmzmvvt7ezajhyi.us-east-1.es.amazonaws.com/photos/_doc"
 OPENSEARCH_USERNAME = "yashavika"
