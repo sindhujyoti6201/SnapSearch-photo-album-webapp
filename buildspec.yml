@@ -12,8 +12,8 @@ phases:
       - zip ../index-photos.zip index-photos.py
       - zip ../search-photos.zip search-photos.py
       - cd ..
-      - aws lambda update-function-code --function-name index-photos --zip-file fileb://index-photos.zip
-      - aws lambda update-function-code --function-name search-photos --zip-file fileb://search-photos.zip
+      - aws lambda update-function-code --function-name index-photos3 --zip-file fileb://index-photos.zip
+      - aws lambda update-function-code --function-name search-photos3 --zip-file fileb://search-photos.zip
 artifacts:
   files:
     - index-photos.zip
