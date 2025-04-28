@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - cd lambdas
+      - zip -r ../lambda-deployment.zip .
+artifacts:
+  files:
+    - lambda-deployment.zip
