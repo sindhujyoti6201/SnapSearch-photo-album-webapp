@@ -1,7 +1,7 @@
-// const apigClient = apigClientFactory.newClient();
+const apigClient = apigClientFactory.newClient();
 
 // function uploadPhoto() {
-//     console.log("===================UPLOADING========================");
+//     console.log("=================== UPLOADING ====================");
 //     const fileInput = document.getElementById('photoFile');
 //     const labelsInput = document.getElementById('customLabels');
 //     const file = fileInput.files[0];
@@ -15,56 +15,33 @@
 //     const reader = new FileReader();
 //     reader.onload = function (event) {
 //         const binaryData = event.target.result;
+
 //         const params = {
-//             filename: file.name
+//             filename: file.name,
+//             bucket: 'photo-bucket-assignment3'
 //         };
+
+
 
 //         const additionalParams = {
 //             headers: {
-//                 'Content-Type': file.type,
-//                 'x-amz-meta-customLabels': customLabels
+//                 'Content-Type': 'image/',
+//                 'x-amz-meta-customLabels': customLabels || ''
 //             }
 //         };
 
-//         apigClient.uploadPut(params, binaryData, additionalParams)
+//         apigClient.uploadBucketFilenamePut(params, binaryData, additionalParams)
 //             .then(result => {
+//                 console.log("✅ Upload successful:", result);
 //                 alert("Photo uploaded successfully!");
 //             })
 //             .catch(error => {
-//                 console.error("Upload failed: ", error);
+//                 console.error("❌ Upload failed:", error);
 //                 alert("Upload failed.");
 //             });
 //     };
 //     reader.readAsArrayBuffer(file);
 // }
-
-// function searchPhotos() {
-//     console.log("===================SEARCHING========================");
-//     const query = document.getElementById('searchQuery').value;
-//     const params = {
-//         q: query
-//     };
-
-//     apigClient.searchGet(params, {}, {})
-//         .then(response => {
-//             const results = document.getElementById('results');
-//             results.innerHTML = '';
-//             const photos = response.data.results || [];
-//             photos.forEach(url => {
-//                 const img = document.createElement('img');
-//                 img.src = url;
-//                 results.appendChild(img);
-//             });
-//         })
-//         .catch(error => {
-//             console.error("Search failed: ", error);
-//             alert("Search failed.");
-//         });
-// }
-
-
-
-const apigClient = apigClientFactory.newClient();
 
 function uploadPhoto() {
     console.log("=================== UPLOADING ====================");
@@ -83,17 +60,18 @@ function uploadPhoto() {
         const binaryData = event.target.result;
 
         const params = {
-            filename: file.name,
-            'x-amz-meta-customLabels': customLabels || ''
+            filename: encodeURIComponent(file.name),   // URL-encode filename
+            bucket: 'photo-bucket-assignment3'
         };
 
         const additionalParams = {
             headers: {
-                'Content-Type': file.type
+                'Content-Type': file.type || 'application/octet-stream',   // Dynamically set Content-Type
+                'x-amz-meta-customLabels': customLabels || ''
             }
         };
 
-        apigClient.uploadPut(params, binaryData, additionalParams)
+        apigClient.uploadBucketFilenamePut(params, binaryData, additionalParams)
             .then(result => {
                 console.log("✅ Upload successful:", result);
                 alert("Photo uploaded successfully!");
@@ -103,8 +81,10 @@ function uploadPhoto() {
                 alert("Upload failed.");
             });
     };
+
     reader.readAsArrayBuffer(file);
 }
+
 
 function searchPhotos() {
     console.log("=================== SEARCHING ====================");
