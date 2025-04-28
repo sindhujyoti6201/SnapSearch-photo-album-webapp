@@ -123,7 +123,7 @@ apigClientFactory.newClient = function (config) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
         apiGateway.core.utils.assertParametersDefined(params, ['filename', 'bucket']);
-        
+
         var uploadBucketFilenamePutRequest = {
             verb: 'put'.toUpperCase(),
             path: pathComponent + uritemplate('/upload/{bucket}/{filename}').expand(apiGateway.core.utils.parseParametersToObject(params, ['filename', 'bucket', ])),
@@ -131,6 +131,10 @@ apigClientFactory.newClient = function (config) {
             queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
             body: body
         };
+        console.log("===================== UPLOADING ====================");
+        console.log("uploadBucketFilenamePutRequest", uploadBucketFilenamePutRequest);
+        console.log("params", params);
+        console.log("body", uploadBucketFilenamePutRequest.body);
         
         
         return apiGatewayClient.makeRequest(uploadBucketFilenamePutRequest, authType, additionalParams, config.apiKey);
