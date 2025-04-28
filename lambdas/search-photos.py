@@ -9,6 +9,7 @@ username = 'yashavika'
 password = '@Alipore1908'
 basicauth = HTTPBasicAuth(username, password)
 
+print("DEPLOYING LAMBDA VIA CODEBUILD-2")
 opensearch_host = 'search-photos-2zcv2zir5roxmzmvvt7ezajhyi.us-east-1.es.amazonaws.com'
 index = 'photos'
 

@@ -4,7 +4,9 @@ phases:
   build:
     commands:
       - cd lambdas
-      - zip -r ../lambda-deployment.zip .
+      - zip ../index-photos.zip index-photos.py
+      - zip ../search-photos.zip search-photos.py
 artifacts:
   files:
-    - lambda-deployment.zip
+    - index-photos.zip
+    - search-photos.zip
