@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+
+  # S3 Bucket for photos
+  PhotoStorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: photo-album-storage-bucket-yashavika4
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  PhotoStorageBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PhotoStorageBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:PutObject
+            Resource: !Sub "${PhotoStorageBucket.Arn}/*"
+
+  # S3 Bucket for frontend
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: frontend-photo-album-bucket-yashavika4
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+
+  # IAM Role for Lambda functions
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaS3RekognitionES
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: arn:aws:s3:::photo-album-storage-bucket/*
+              - Effect: Allow
+                Action:
+                  - rekognition:DetectLabels
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - es:ESHttpPut
+                  - es:ESHttpPost
+                  - es:ESHttpGet
+                Resource: arn:aws:es:us-east-1:156041407786:domain/photos*
+
+  # Lambda function for indexing photos
+  IndexPhotosLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: index-photos3
+      Handler: index-photos.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: lambdas-code-bucket-cloudformation
+        S3Key: index-photos.zip
+      Runtime: python3.8
+      Timeout: 60
+
+  # Lambda function for searching photos
+  SearchPhotosLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: search-photos3
+      Handler: search-photos.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: lambdas-code-bucket-cloudformation
+        S3Key: search-photos.zip
+      Runtime: python3.8
+      Timeout: 60
+
+  # API Gateway
+  PhotoAlbumApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: PhotoAlbumApi
+      Description: API for photo album (no actions).
+      FailOnWarnings: true
+
+  # Resource for /photos
+  PhotosResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt PhotoAlbumApi.RootResourceId
+      PathPart: photos
+      RestApiId: !Ref PhotoAlbumApi
+
+  # Resource for /search
+  SearchResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt PhotoAlbumApi.RootResourceId
+      PathPart: search
+      RestApiId: !Ref PhotoAlbumApi
+
+Outputs:
+  PhotoStorageBucketName:
+    Value: !Ref PhotoStorageBucket
+
+  FrontendBucketURL:
+    Description: URL for the frontend S3 bucket
+    Value: !GetAtt FrontendBucket.WebsiteURL
+
+  ApiUrl:
+    Description: URL for the API Gateway
+    Value: !Sub "https://${PhotoAlbumApi}.execute-api.${AWS::Region}.amazonaws.com/"
